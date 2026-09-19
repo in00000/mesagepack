@@ -596,3 +596,60 @@ img { display: block; max-width: 100%; }
   .card .title { font-size: 1.12rem; }
   .card .message-body { font-size: 0.96rem; }
 }
+/* ============================================================
+   TODAY'S MESSAGES BOX
+   ============================================================ */
+.today-box {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff4cc 100%);
+  border: 2px solid #ffb300;
+  border-radius: 20px;
+  padding: 16px 14px 6px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(255, 179, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.today-box::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #ffb300 0%, #ff6f00 50%, #ffb300 100%);
+}
+
+.today-box-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: #b26a00;
+  font-size: 1rem;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+  padding-top: 4px;
+}
+
+.today-box-header .today-icon {
+  font-size: 1.15rem;
+}
+
+.today-box-sub {
+  font-size: 0.75rem;
+  color: #a87500;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+/* Cards inside today box should look premium */
+.today-box .card {
+  background: #ffffff;
+  border: 1px solid #ffd966;
+  box-shadow: 0 2px 8px rgba(255, 179, 0, 0.10);
+  margin-bottom: 12px;
+}
+
+.today-box .card .date-badge {
+  background: #ffb300;
+}
