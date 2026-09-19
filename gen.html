@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><title>H</title></head><body>
-<textarea id="i" rows="20" style="width:100%">PD45981:Kx7mQ9pL!2
+<textarea id="i" rows="22" style="width:100%;font-family:monospace">PD45981:Kx7mQ9pL!2
 PD45982:Rn4#hT8wB$6
 PD45983:Qn9%vZ3kJ&7
 PD45984:Fb2@wM6yD^5
@@ -18,9 +18,9 @@ PD45996:Vb2#yH8cK%3
 PD45997:Lq9!nM5wZ*7
 PD45998:Rx4$gP7bT&2
 PD45999:Fm6@kN2vX#9
-PD46000:Ch3%jL8qW!4</textarea>
-<button onclick="go()" style="padding:10px">⚡ Hash</button>
-<pre id="o">...</pre>
+PD46000:Ch3%jL8qW!4</textarea><br>
+<button onclick="go()" style="padding:12px 20px;font-size:16px">⚡ Hash</button>
+<pre id="o" style="background:#f0f0f0;padding:12px">Click the button...</pre>
 <script>
 const hx=h=>{const a=new Uint8Array(h.length/2);for(let i=0;i<h.length;i+=2)a[i/2]=parseInt(h.substr(i,2),16);return a};
 const bx=b=>Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join('');
