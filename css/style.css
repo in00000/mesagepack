@@ -215,7 +215,7 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-/* Language segmented control */
+/* Language segmented */
 .segmented {
   display: flex;
   background: var(--subtle-bg);
@@ -241,6 +241,60 @@ img { display: block; max-width: 100%; }
   color: var(--brand-red);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+
+/* SEARCH BOX */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--subtle-bg);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  padding: 0 12px;
+  transition: all .2s ease;
+}
+.search-box:focus-within {
+  background: #fff;
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.08);
+}
+.search-icon {
+  font-size: 0.95rem;
+  opacity: 0.5;
+  pointer-events: none;
+  margin-right: 8px;
+  line-height: 1;
+}
+.search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 11px 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  outline: none;
+  min-height: 44px;
+}
+.search-box input::placeholder {
+  color: #aaa;
+  font-size: 0.88rem;
+}
+.clear-search {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #d0d0d0;
+  color: #fff;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.clear-search:hover { background: var(--brand-red); }
+.clear-search.hidden { display: none; }
 
 /* Category chips — wrap so all fit on screen */
 .chips-wrap {
@@ -362,16 +416,51 @@ img { display: block; max-width: 100%; }
   height: 1px;
   background: #e0e0e4;
 }
-.section-divider.today-divider {
-  color: var(--brand-red);
-  font-size: 0.82rem;
-  margin-top: 4px;
+
+/* TODAY'S MESSAGES BOX */
+.today-box {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff4cc 100%);
+  border: 2px solid #ffb300;
+  border-radius: 20px;
+  padding: 16px 14px 6px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(255, 179, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
 }
-.section-divider.today-divider::before,
-.section-divider.today-divider::after {
-  background: var(--brand-red);
-  opacity: .35;
+.today-box::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #ffb300 0%, #ff6f00 50%, #ffb300 100%);
 }
+.today-box-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: #b26a00;
+  font-size: 1rem;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+  padding-top: 4px;
+}
+.today-box-header .today-icon { font-size: 1.15rem; }
+.today-box-sub {
+  font-size: 0.75rem;
+  color: #a87500;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+.today-box .card {
+  background: #ffffff;
+  border: 1px solid #ffd966;
+  box-shadow: 0 2px 8px rgba(255, 179, 0, 0.10);
+  margin-bottom: 12px;
+}
+.today-box .card .date-badge { background: #ffb300; }
 
 /* CARDS */
 .card {
@@ -386,17 +475,7 @@ img { display: block; max-width: 100%; }
 .card.today {
   border: 1.5px solid var(--accent);
   box-shadow: 0 8px 24px rgba(37, 211, 102, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
-  position: relative;
-  overflow: hidden;
 }
-.card.today::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
-}
-
 .card .date-badge {
   display: inline-block;
   background: var(--brand-black);
@@ -409,7 +488,6 @@ img { display: block; max-width: 100%; }
   letter-spacing: 0.3px;
 }
 .card .date-badge.today-badge { background: var(--accent); }
-
 .card .title {
   font-weight: 700;
   font-size: 1.05rem;
@@ -417,7 +495,6 @@ img { display: block; max-width: 100%; }
   margin-bottom: 10px;
   line-height: 1.3;
 }
-
 .card .message-body {
   white-space: pre-wrap;
   line-height: 1.6;
@@ -427,7 +504,6 @@ img { display: block; max-width: 100%; }
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
-
 .card .signature {
   margin-top: 12px;
   padding: 12px 14px;
@@ -438,7 +514,6 @@ img { display: block; max-width: 100%; }
   color: #444;
   line-height: 1.75;
 }
-
 .card .offer-box {
   background: #fff9e6;
   border-left: 4px solid #ffb300;
@@ -529,7 +604,18 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 1px 4px rgba(37, 211, 102, 0.3);
 }
 
-/* EDIT TEXTAREA */
+/* EDIT */
+.edit-wrap { margin-bottom: 12px; }
+.edit-hint {
+  background: #fff9e6;
+  border-left: 3px solid #ffb300;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #7a5500;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
 .edit-area {
   width: 100%;
   min-height: 160px;
@@ -595,61 +681,4 @@ img { display: block; max-width: 100%; }
   .card { padding: 20px; }
   .card .title { font-size: 1.12rem; }
   .card .message-body { font-size: 0.96rem; }
-}
-/* ============================================================
-   TODAY'S MESSAGES BOX
-   ============================================================ */
-.today-box {
-  background: linear-gradient(135deg, #fff9e6 0%, #fff4cc 100%);
-  border: 2px solid #ffb300;
-  border-radius: 20px;
-  padding: 16px 14px 6px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 24px rgba(255, 179, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
-  position: relative;
-  overflow: hidden;
-}
-
-.today-box::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #ffb300 0%, #ff6f00 50%, #ffb300 100%);
-}
-
-.today-box-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 800;
-  color: #b26a00;
-  font-size: 1rem;
-  letter-spacing: -0.2px;
-  margin-bottom: 4px;
-  padding-top: 4px;
-}
-
-.today-box-header .today-icon {
-  font-size: 1.15rem;
-}
-
-.today-box-sub {
-  font-size: 0.75rem;
-  color: #a87500;
-  font-weight: 600;
-  margin-bottom: 12px;
-  letter-spacing: 0.3px;
-}
-
-/* Cards inside today box should look premium */
-.today-box .card {
-  background: #ffffff;
-  border: 1px solid #ffd966;
-  box-shadow: 0 2px 8px rgba(255, 179, 0, 0.10);
-  margin-bottom: 12px;
-}
-
-.today-box .card .date-badge {
-  background: #ffb300;
 }
