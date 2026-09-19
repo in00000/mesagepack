@@ -52,9 +52,9 @@
 
   <div class="controls-sticky">
     <div class="segmented">
-      <button data-lang="en" class="active" onclick="setLang('en')">English</button>
+      <button data-lang="mr" class="active" onclick="setLang('mr')">मराठी</button>
+      <button data-lang="en" onclick="setLang('en')">English</button>
       <button data-lang="hi" onclick="setLang('hi')">हिन्दी</button>
-      <button data-lang="mr" onclick="setLang('mr')">मराठी</button>
     </div>
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -75,16 +75,23 @@
   <div class="container">
     <div id="detailsForm" class="details-form hidden">
       <div class="details-header">
-        <h3>🏢 Business Details</h3>
+        <h3 id="detailsTitle">🏢 Business Details</h3>
         <button class="close-btn" onclick="toggleDetailsForm()">✕</button>
       </div>
-      <p class="hint">Added to every message you copy.</p>
-      <input id="bizName" placeholder="Business Name">
-      <input id="bizPhone" placeholder="Phone Number">
+      <div id="welcomeBanner" class="welcome-banner hidden">
+        <span class="welcome-icon">🎉</span>
+        <div>
+          <strong>Welcome!</strong>
+          <div class="welcome-sub">Please fill your business details once. They will be added to every message you copy.</div>
+        </div>
+      </div>
+      <p class="hint">These details are saved on your device and auto-added to every message.</p>
+      <input id="bizName" placeholder="Business Name *">
+      <input id="bizPhone" placeholder="Phone Number *">
       <input id="bizWebsite" placeholder="Website">
       <input id="bizAddress" placeholder="Address">
       <input id="bizMapLink" placeholder="Google Review / Map Link" inputmode="url">
-      <button onclick="saveDetails()" class="btn-primary">💾 Save Details</button>
+      <button id="saveDetailsBtn" onclick="saveDetails()" class="btn-primary">💾 Save Details</button>
     </div>
     <div id="messageList"></div>
   </div>
