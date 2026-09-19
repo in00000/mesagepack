@@ -707,3 +707,34 @@ img { display: block; max-width: 100%; }
   .card .title { font-size: 1.12rem; }
   .card .message-body { font-size: 0.96rem; }
 }
+/* ============================================================
+   WELCOME BANNER (First-Login)
+   ============================================================ */
+.welcome-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff4cc 100%);
+  border: 1.5px solid #ffb300;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  animation: slideDown .3s ease;
+}
+.welcome-banner.hidden { display: none; }
+.welcome-banner .welcome-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.welcome-banner strong {
+  display: block;
+  font-size: 1rem;
+  color: #b26a00;
+  margin-bottom: 3px;
+}
+.welcome-banner .welcome-sub {
+  font-size: 0.83rem;
+  color: #7a5500;
+  line-height: 1.4;
+}
