@@ -1,63 +1,43 @@
 /* ============================================================
    AUTHENTICATION
-   Verifies ID + password against USERS in credentials.js
-   Stores the logged-in ID in localStorage.
+   Verifies username + password against USERS in data/credentials.js
+   Stores session in localStorage so user stays logged in.
    ============================================================ */
 
 const SESSION_KEY = "dm_logged_user";
 
-let currentUser = null;
-
 function handleLogin() {
-  const usernameInput = document.getElementById("usernameInput");
-  const passwordInput = document.getElementById("passwordInput");
+  const u = document.getElementById("usernameInput").value.trim();
+  const p = document.getElementById("passwordInput").value;
   const errEl = document.getElementById("loginError");
-
-  const enteredId = usernameInput.value.trim().toUpperCase();
-  const enteredPassword = passwordInput.value;
-
   errEl.textContent = "";
 
-  const match = USERS.find(
-    user =>
-      user.u.toUpperCase() === enteredId &&
-      user.p === enteredPassword
-  );
-
+  const match = USERS.find(x => x.u === u && x.p === p);
   if (!match) {
-    errEl.textContent = "Invalid ID or password.";
+    errEl.textContent = "Invalid username or password.";
     return;
   }
 
-  currentUser = match.u;
-  localStorage.setItem(SESSION_KEY, currentUser);
-
+  localStorage.setItem(SESSION_KEY, u);
+  currentUser = u;
   showApp();
 }
 
 function logout() {
   localStorage.removeItem(SESSION_KEY);
   currentUser = null;
-
   document.getElementById("appScreen").classList.add("hidden");
   document.getElementById("loginScreen").classList.remove("hidden");
-
   document.getElementById("usernameInput").value = "";
   document.getElementById("passwordInput").value = "";
   document.getElementById("loginError").textContent = "";
 }
 
 function checkExistingSession() {
-  const savedUser = localStorage.getItem(SESSION_KEY);
-
-  const validUser = USERS.find(user => user.u === savedUser);
-
-  if (validUser) {
-    currentUser = validUser.u;
+  const saved = localStorage.getItem(SESSION_KEY);
+  if (saved && USERS.some(x => x.u === saved)) {
+    currentUser = saved;
     return true;
   }
-
-  localStorage.removeItem(SESSION_KEY);
-  currentUser = null;
   return false;
 }
