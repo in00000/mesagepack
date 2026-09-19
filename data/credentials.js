@@ -1,25 +1,29 @@
 /* ============================================================
-   15 LOGIN ACCOUNTS
-   Username: PD45981 ... PD45995
-   Password: Shree@XXXXX  (same 5-digit number as username)
+   20 LOGIN ACCOUNTS
+   Username: PD45981 ... PD46000
+   Password: pdXXXXX  (unique 5-digit number, non-sequential)
 
-   To change a password, just edit the "p" field below.
-   Do NOT remove entries — 15 logins are configured.
+   To change a password, edit the "p" field below.
    ============================================================ */
 const USERS = [
-  { u: "PD45981", p: "Shree@45981" },
-  { u: "PD45982", p: "Shree@45982" },
-  { u: "PD45983", p: "Shree@45983" },
-  { u: "PD45984", p: "Shree@45984" },
-  { u: "PD45985", p: "Shree@45985" },
-  { u: "PD45986", p: "Shree@45986" },
-  { u: "PD45987", p: "Shree@45987" },
-  { u: "PD45988", p: "Shree@45988" },
-  { u: "PD45989", p: "Shree@45989" },
-  { u: "PD45990", p: "Shree@45990" },
-  { u: "PD45991", p: "Shree@45991" },
-  { u: "PD45992", p: "Shree@45992" },
-  { u: "PD45993", p: "Shree@45993" },
-  { u: "PD45994", p: "Shree@45994" },
-  { u: "PD45995", p: "Shree@45995" }
+  { u: "PD45981", p: "pd73492" },
+  { u: "PD45982", p: "pd28156" },
+  { u: "PD45983", p: "pd91843" },
+  { u: "PD45984", p: "pd56279" },
+  { u: "PD45985", p: "pd40581" },
+  { u: "PD45986", p: "pd83927" },
+  { u: "PD45987", p: "pd17264" },
+  { u: "PD45988", p: "pd69015" },
+  { u: "PD45989", p: "pd35648" },
+  { u: "PD45990", p: "pd92473" },
+  { u: "PD45991", p: "pd58102" },
+  { u: "PD45992", p: "pd26095" },
+  { u: "PD45993", p: "pd74816" },
+  { u: "PD45994", p: "pd19387" },
+  { u: "PD45995", p: "pd47230" },
+  { u: "PD45996", p: "pd80569" },
+  { u: "PD45997", p: "pd63421" },
+  { u: "PD45998", p: "pd15794" },
+  { u: "PD45999", p: "pd92056" },
+  { u: "PD46000", p: "pd38417" }
 ];
