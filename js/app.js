@@ -1,21 +1,9 @@
 /* ============================================================
    MAIN APP LOGIC — COMPLETE
-   Features:
-   - Session persistence
-   - Language switching (en / hi / mr)
-   - Category filtering
-   - Search (across all languages)
-   - Calendar sort: Today → Upcoming → Past → Undated
-   - TODAY'S MESSAGES BOX
-   - Per-message offer input
-   - Per-message edit (base message only)
-   - Per-message copy with placeholder replacement
-   - Placeholders: {TODAY_DATE} {BUSINESS_NAME} {BUSINESS_PHONE}
-                   {BUSINESS_WEBSITE} {BUSINESS_ADDRESS} {MAP_LINK}
    ============================================================ */
 
 let currentUser = null;
-let currentLang = "en";
+let currentLang = "mr";        // Marathi default
 let currentCategory = "all";
 let currentSearch = "";
 let clientDetails = { name: "", phone: "", website: "", address: "", mapLink: "" };
@@ -36,7 +24,8 @@ window.addEventListener("load", () => {
 function showApp() {
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("appScreen").classList.remove("hidden");
-  // Reset search on app load
+
+  // Reset search
   currentSearch = "";
   const sInput = document.getElementById("searchInput");
   if (sInput) sInput.value = "";
@@ -46,6 +35,37 @@ function showApp() {
   loadClientDetails();
   loadOffersAndEdits();
   renderMessages();
+
+  // First-login flow: if no details saved yet, open form and prompt
+  const hasDetails = localStorage.getItem("dm_details_" + currentUser);
+  if (!hasDetails) {
+    openDetailsFormFirstTime();
+  }
+}
+
+/* -------- FIRST-LOGIN DETAILS FLOW -------- */
+function openDetailsFormFirstTime() {
+  const form = document.getElementById("detailsForm");
+  if (!form) return;
+  form.classList.remove("hidden");
+
+  // Show welcome banner
+  const banner = document.getElementById("welcomeBanner");
+  if (banner) banner.classList.remove("hidden");
+
+  // Change title and button text
+  const title = document.getElementById("detailsTitle");
+  if (title) title.textContent = "🎉 Welcome! Setup Your Details";
+
+  const btn = document.getElementById("saveDetailsBtn");
+  if (btn) btn.textContent = "💾 Save & Continue";
+
+  // Scroll to form
+  setTimeout(() => {
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    const nameInput = document.getElementById("bizName");
+    if (nameInput) nameInput.focus();
+  }, 150);
 }
 
 /* -------- LANGUAGE -------- */
@@ -94,7 +114,20 @@ function matchesSearch(msg, q) {
 
 /* -------- CLIENT DETAILS -------- */
 function toggleDetailsForm() {
-  document.getElementById("detailsForm").classList.toggle("hidden");
+  const form = document.getElementById("detailsForm");
+  if (!form) return;
+  const isOpening = form.classList.contains("hidden");
+  form.classList.toggle("hidden");
+
+  // When re-opening via header button, reset to normal mode
+  if (isOpening) {
+    const banner = document.getElementById("welcomeBanner");
+    if (banner) banner.classList.add("hidden");
+    const title = document.getElementById("detailsTitle");
+    if (title) title.textContent = "🏢 Business Details";
+    const btn = document.getElementById("saveDetailsBtn");
+    if (btn) btn.textContent = "💾 Save Details";
+  }
 }
 
 function loadClientDetails() {
@@ -124,16 +157,53 @@ function loadClientDetails() {
 
 function saveDetails() {
   const getVal = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+
+  const name = getVal("bizName");
+  const phone = getVal("bizPhone");
+
+  // If first-login flow, require name and phone
+  const isFirstTime = !localStorage.getItem("dm_details_" + currentUser);
+  if (isFirstTime) {
+    if (!name) {
+      alert("Please enter your Business Name.");
+      document.getElementById("bizName").focus();
+      return;
+    }
+    if (!phone) {
+      alert("Please enter your Phone Number.");
+      document.getElementById("bizPhone").focus();
+      return;
+    }
+  }
+
   clientDetails = {
-    name: getVal("bizName"),
-    phone: getVal("bizPhone"),
+    name: name,
+    phone: phone,
     website: getVal("bizWebsite"),
     address: getVal("bizAddress"),
     mapLink: getVal("bizMapLink")
   };
   localStorage.setItem("dm_details_" + currentUser, JSON.stringify(clientDetails));
-  showToast("✅ Details saved");
+  showToast(isFirstTime ? "✅ Setup complete!" : "✅ Details saved");
+
+  // Reset button / title back to normal
+  const banner = document.getElementById("welcomeBanner");
+  if (banner) banner.classList.add("hidden");
+  const title = document.getElementById("detailsTitle");
+  if (title) title.textContent = "🏢 Business Details";
+  const btn = document.getElementById("saveDetailsBtn");
+  if (btn) btn.textContent = "💾 Save Details";
+
   renderMessages();
+
+  // Auto-hide form after first-time setup so user sees messages
+  if (isFirstTime) {
+    setTimeout(() => {
+      const form = document.getElementById("detailsForm");
+      if (form) form.classList.add("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 400);
+  }
 }
 
 /* -------- PERSISTENCE -------- */
@@ -186,7 +256,7 @@ function replacePlaceholders(text) {
 /* -------- GET BASE MESSAGE -------- */
 function getBaseMessage(msg) {
   if (messageEdits[msg.id]) return messageEdits[msg.id];
-  return msg.message[currentLang] || msg.message.en;
+  return msg.message[currentLang] || msg.message.mr || msg.message.en;
 }
 
 /* -------- BUILD FINAL MESSAGE -------- */
@@ -277,7 +347,7 @@ function renderMessages() {
 
     const header = document.createElement("div");
     header.className = "today-box-header";
-    header.innerHTML = '<span class="today-icon">🎯</span><span>Today\'s Messages</span>';
+    header.innerHTML = '<span class="today-icon">🎯</span><span>आजचे संदेश / Today\'s Messages</span>';
     box.appendChild(header);
 
     const sub = document.createElement("div");
@@ -306,7 +376,7 @@ function buildCard(msg, isToday) {
   card.dataset.id = msg.id;
 
   const fullText = buildFullMessage(msg);
-  const titleText = msg.title[currentLang] || msg.title.en;
+  const titleText = msg.title[currentLang] || msg.title.mr || msg.title.en;
   const offerText = messageOffers[msg.id] || "";
   const isEdited  = !!messageEdits[msg.id];
 
@@ -410,7 +480,7 @@ function copyMessage(id) {
     });
 }
 
-/* -------- EDIT (BASE MESSAGE ONLY) -------- */
+/* -------- EDIT -------- */
 function editMessage(id) {
   const msg = ALL_MESSAGES.find(m => m.id === id);
   if (!msg) return;
@@ -441,7 +511,8 @@ function editMessage(id) {
   saveBtn.style.color = "#fff";
   saveBtn.onclick = () => {
     const trimmed = ta.value.trim();
-    if (!trimmed || trimmed === (msg.message[currentLang] || msg.message.en)) {
+    const orig = msg.message[currentLang] || msg.message.mr || msg.message.en;
+    if (!trimmed || trimmed === orig) {
       delete messageEdits[id];
     } else {
       messageEdits[id] = ta.value;
