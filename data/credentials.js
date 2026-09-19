@@ -1,29 +1,22 @@
-/* ============================================================
-   20 LOGIN ACCOUNTS
-   Username: PD45981 ... PD46000
-   Password: pdXXXXX  (unique 5-digit number, non-sequential)
-
-   To change a password, edit the "p" field below.
-   ============================================================ */
 const USERS = [
-  { u: "PD45981", p: "pd73492" },
-  { u: "PD45982", p: "pd28156" },
-  { u: "PD45983", p: "pd91843" },
-  { u: "PD45984", p: "pd56279" },
-  { u: "PD45985", p: "pd40581" },
-  { u: "PD45986", p: "pd83927" },
-  { u: "PD45987", p: "pd17264" },
-  { u: "PD45988", p: "pd69015" },
-  { u: "PD45989", p: "pd35648" },
-  { u: "PD45990", p: "pd92473" },
-  { u: "PD45991", p: "pd58102" },
-  { u: "PD45992", p: "pd26095" },
-  { u: "PD45993", p: "pd74816" },
-  { u: "PD45994", p: "pd19387" },
-  { u: "PD45995", p: "pd47230" },
-  { u: "PD45996", p: "pd80569" },
-  { u: "PD45997", p: "pd63421" },
-  { u: "PD45998", p: "pd15794" },
-  { u: "PD45999", p: "pd92056" },
-  { u: "PD46000", p: "pd38417" }
+  { u: "PD45981", s: "0b96b8e523201d1f1e40507d8b058e8c", h: "81e247d1d5826ceaf2046a9289a3d7a06627298cf503e479ee375e74a41c1087" },
+  { u: "PD45982", s: "7157d0b1d958ee3ba0094e5366028d10", h: "828e017b043bb77e14aab8c4ec2a605a66f0d5eaaa7d6f1f83ca1f37a1a0a343" },
+  { u: "PD45983", s: "1c721abfc66484495f5d8857099fe7d4", h: "fd9a6bf2fd97017c29ca86765021c23265143c80503dc712285b924cc2250210" },
+  { u: "PD45984", s: "14272c1c4e5d835e9761f8da9a154fb7", h: "acc3fe7dd3674b810c3004991aa825d16219bc36bbf787b420306c9e199c67dc" },
+  { u: "PD45985", s: "305bef1652fe1a5471f594161c132527", h: "9ea30d27f97c6d856b9fe16ac04e4d5ee1f7b2929e0c43bdc400c61f384f9e90" },
+  { u: "PD45986", s: "67ccdd094038b374cc436eb2079c485b", h: "24ef505802d764c6f3977acd8d687a6056c82cc5a55fbaebb1ec023b31695c64" },
+  { u: "PD45987", s: "543a2c7fafd5ecafe4c8644e243f1c79", h: "7f7ad06f6031e6cb16a305e0c6500705529ad42e163a855352dab6859a50843b" },
+  { u: "PD45988", s: "45e8b001d04b66346ca02f97d93f49d3", h: "da5b5dd59d806d08b6a568f3a08d0a7a08f7f0f177b7e2a2ba3199bf61f33f1b" },
+  { u: "PD45989", s: "d2c3699248a1d6cabcaec14e0d161384", h: "930bde81ceffa794abb1999a08d4b1362164efcd235ba4e78bf5972e1ff31881" },
+  { u: "PD45990", s: "1134a109da9ada4ffcd222d765bac00a", h: "45cd89d3bf310d8d77b1811d46c43e78213094c4ad64835239fec8643d19d824" },
+  { u: "PD45991", s: "7762f765b9dc4e72f94d0dfa518d4891", h: "180c8b50f190f2e1bb6982ad193fef7bc182b32d1c5150da894c9cc871bd288a" },
+  { u: "PD45992", s: "ae373db1fc8cee6f89d02e85891fbef9", h: "6682aedfb94b889163b37cd2c553821ef803fa50280116170160d5b85f15c79a" },
+  { u: "PD45993", s: "560b5672b686dfe2aabfb04dd4784681", h: "f6541c340832752918f6ebf3975d74e75e31ea269e3053f0d38a2c00e5952493" },
+  { u: "PD45994", s: "12519c8c696dbf4f371f807909b7d78f", h: "4768375f0562f871912b756bd8dd1f59d5b60d24317c559b8cec8324563b6e9b" },
+  { u: "PD45995", s: "ca8f4c06758aaaf30f0bd5073a0d04e9", h: "9a6350ae8d6ed8d728e0f14327addd81029b470bae5d23d435e8ed62b65b4769" },
+  { u: "PD45996", s: "75ad2170a1247304e02710019126a76e", h: "1ff0b38a2acb3a212061954e9ebccb00052907571d1bc826575a31ddfa99f64e" },
+  { u: "PD45997", s: "5763c8fb9245a88c8b2a987b47d7bd64", h: "5fdd880b3433684f188871a1c3fd32d01f9af9e03ead3733bb03acabffefaa45" },
+  { u: "PD45998", s: "1a4a9923e1710b37c373019a247febe7", h: "513e86ec5e5b6b19c46fe6efd0182287248cd5cd973d08166dd9e1b98c3f6fa1" },
+  { u: "PD45999", s: "695877029b1aa5709d93a813289d16c7", h: "2d5618832f812844695c24467865e4f0b612b44f70c7e5502b124e5821b05e58" },
+  { u: "PD46000", s: "b1c1e2305b2b0d9b62971a9aa18844ae", h: "7723b9a5bb02e03575b7c2652c19f7d926f37b00bb4c35bbb107d4817631d9a6" }
 ];
