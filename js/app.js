@@ -222,14 +222,13 @@ function loadOffersAndEdits() {
 function saveOffers() { localStorage.setItem("dm_offers_" + currentUser, JSON.stringify(messageOffers)); }
 function saveEdits()  { localStorage.setItem("dm_edits_"  + currentUser, JSON.stringify(messageEdits)); }
 
-/* -------- SIGNATURE -------- */
 function buildSignature() {
   if (!clientDetails.name && !clientDetails.phone && !clientDetails.website && !clientDetails.address) return "";
   let s = "";
-  if (clientDetails.name)    s += "🏢 " + clientDetails.name + "\n";
-  if (clientDetails.phone)   s += "📞 " + clientDetails.phone + "\n";
-  if (clientDetails.website) s += "🌐 " + clientDetails.website + "\n";
-  if (clientDetails.address) s += "📍 " + clientDetails.address;
+  if (clientDetails.name)    s += clientDetails.name + "\n";
+  if (clientDetails.phone)   s += "📞 Phone: " + clientDetails.phone + "\n";
+  if (clientDetails.website) s += "🌐 Website: " + clientDetails.website + "\n";
+  if (clientDetails.address) s += "📍 Location: " + clientDetails.address;
   return s.trim();
 }
 
