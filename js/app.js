@@ -1,13 +1,14 @@
 /* ============================================================
-   MAIN APP LOGIC — COMPLETE REVISED
+   MAIN APP LOGIC — COMPLETE
    Features:
    - Session persistence
    - Language switching (en / hi / mr)
    - Category filtering
+   - Search (across all languages)
    - Calendar sort: Today → Upcoming → Past → Undated
-   - TODAY'S MESSAGES BOX (highlighted, all today's items together)
+   - TODAY'S MESSAGES BOX
    - Per-message offer input
-   - Per-message edit (base message only — offer/signature still appended)
+   - Per-message edit (base message only)
    - Per-message copy with placeholder replacement
    - Placeholders: {TODAY_DATE} {BUSINESS_NAME} {BUSINESS_PHONE}
                    {BUSINESS_WEBSITE} {BUSINESS_ADDRESS} {MAP_LINK}
@@ -16,6 +17,7 @@
 let currentUser = null;
 let currentLang = "en";
 let currentCategory = "all";
+let currentSearch = "";
 let clientDetails = { name: "", phone: "", website: "", address: "", mapLink: "" };
 let messageOffers = {};
 let messageEdits  = {};
@@ -34,6 +36,13 @@ window.addEventListener("load", () => {
 function showApp() {
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("appScreen").classList.remove("hidden");
+  // Reset search on app load
+  currentSearch = "";
+  const sInput = document.getElementById("searchInput");
+  if (sInput) sInput.value = "";
+  const sClear = document.getElementById("clearSearchBtn");
+  if (sClear) sClear.classList.add("hidden");
+
   loadClientDetails();
   loadOffersAndEdits();
   renderMessages();
@@ -55,6 +64,32 @@ function setCategory(cat) {
     b.classList.toggle("active", b.dataset.cat === cat);
   });
   renderMessages();
+}
+
+/* -------- SEARCH -------- */
+function onSearchInput(val) {
+  currentSearch = (val || "").trim().toLowerCase();
+  const clearBtn = document.getElementById("clearSearchBtn");
+  if (clearBtn) clearBtn.classList.toggle("hidden", !currentSearch);
+  renderMessages();
+}
+
+function clearSearch() {
+  currentSearch = "";
+  const input = document.getElementById("searchInput");
+  if (input) { input.value = ""; input.focus(); }
+  const clearBtn = document.getElementById("clearSearchBtn");
+  if (clearBtn) clearBtn.classList.add("hidden");
+  renderMessages();
+}
+
+function matchesSearch(msg, q) {
+  if (!q) return true;
+  const fields = [
+    msg.title?.en, msg.title?.hi, msg.title?.mr,
+    msg.message?.en, msg.message?.hi, msg.message?.mr
+  ];
+  return fields.some(f => f && f.toLowerCase().includes(q));
 }
 
 /* -------- CLIENT DETAILS -------- */
@@ -148,18 +183,13 @@ function replacePlaceholders(text) {
     .replace(/\{MAP_LINK\}/g, clientDetails.mapLink || mapFallback);
 }
 
-/* -------- GET BASE MESSAGE (edited or original) -------- */
+/* -------- GET BASE MESSAGE -------- */
 function getBaseMessage(msg) {
   if (messageEdits[msg.id]) return messageEdits[msg.id];
   return msg.message[currentLang] || msg.message.en;
 }
 
-/* -------- BUILD FINAL MESSAGE --------
-   Order:
-     1. Base message (edited or original) with placeholders replaced
-     2. Offer (if enabled + non-empty)
-     3. Signature (if enabled)
------------------------------------- */
+/* -------- BUILD FINAL MESSAGE -------- */
 function buildFullMessage(msg) {
   let text = replacePlaceholders(getBaseMessage(msg));
 
@@ -213,21 +243,27 @@ function sortByCalendar(messages) {
   });
 }
 
-/* -------- RENDER (WITH TODAY BOX) -------- */
+/* -------- RENDER -------- */
 function renderMessages() {
   const list = document.getElementById("messageList");
+  if (!list) return;
   const today = getTodayStr();
 
   let items = ALL_MESSAGES.slice();
   if (currentCategory !== "all") {
     items = items.filter(m => m.category === currentCategory);
   }
+  if (currentSearch) {
+    items = items.filter(m => matchesSearch(m, currentSearch));
+  }
   items = sortByCalendar(items);
 
   list.innerHTML = "";
 
   if (items.length === 0) {
-    list.innerHTML = '<p style="text-align:center;color:#666;padding:30px 0;">No messages in this category.</p>';
+    list.innerHTML = `<p style="text-align:center;color:#666;padding:30px 0;">${
+      currentSearch ? `No messages match "<b>${escapeHtml(currentSearch)}</b>"` : "No messages in this category."
+    }</p>`;
     return;
   }
 
