@@ -1,23 +1,25 @@
 /* ============================================================
    15 LOGIN ACCOUNTS
    Username: PD45981 ... PD45995
-   Password format: pcmcdiary + unique 4-digit code
-   ============================================================ */
+   Password: Shree@XXXXX  (same 5-digit number as username)
 
+   To change a password, just edit the "p" field below.
+   Do NOT remove entries — 15 logins are configured.
+   ============================================================ */
 const USERS = [
-  { u: "PD45981", p: "pcmcdiary4827" },
-  { u: "PD45982", p: "pcmcdiary7314" },
-  { u: "PD45983", p: "pcmcdiary9062" },
-  { u: "PD45984", p: "pcmcdiary1589" },
-  { u: "PD45985", p: "pcmcdiary6240" },
-  { u: "PD45986", p: "pcmcdiary3975" },
-  { u: "PD45987", p: "pcmcdiary8406" },
-  { u: "PD45988", p: "pcmcdiary2751" },
-  { u: "PD45989", p: "pcmcdiary5683" },
-  { u: "PD45990", p: "pcmcdiary9148" },
-  { u: "PD45991", p: "pcmcdiary3469" },
-  { u: "PD45992", p: "pcmcdiary8073" },
-  { u: "PD45993", p: "pcmcdiary2516" },
-  { u: "PD45994", p: "pcmcdiary6792" },
-  { u: "PD45995", p: "pcmcdiary4385" }
+  { u: "PD45981", p: "Shree@45981" },
+  { u: "PD45982", p: "Shree@45982" },
+  { u: "PD45983", p: "Shree@45983" },
+  { u: "PD45984", p: "Shree@45984" },
+  { u: "PD45985", p: "Shree@45985" },
+  { u: "PD45986", p: "Shree@45986" },
+  { u: "PD45987", p: "Shree@45987" },
+  { u: "PD45988", p: "Shree@45988" },
+  { u: "PD45989", p: "Shree@45989" },
+  { u: "PD45990", p: "Shree@45990" },
+  { u: "PD45991", p: "Shree@45991" },
+  { u: "PD45992", p: "Shree@45992" },
+  { u: "PD45993", p: "Shree@45993" },
+  { u: "PD45994", p: "Shree@45994" },
+  { u: "PD45995", p: "Shree@45995" }
 ];
