@@ -53,11 +53,19 @@ function toggleDetailsForm() {
 
 function loadClientDetails() {
   const saved = localStorage.getItem("dm_details_" + currentUser);
-  clientDetails = saved ? JSON.parse(saved) : { name: "", phone: "", website: "", address: "" };
-  document.getElementById("bizName").value = clientDetails.name || "";
-  document.getElementById("bizPhone").value = clientDetails.phone || "";
-  document.getElementById("bizWebsite").value = clientDetails.website || "";
-  document.getElementById("bizAddress").value = clientDetails.address || "";
+  let parsed = null;
+  if (saved) {
+    try { parsed = JSON.parse(saved); }
+    catch (e) { console.warn("Corrupted client details, resetting.", e); }
+  }
+  clientDetails = parsed && typeof parsed === "object"
+    ? { name: parsed.name || "", phone: parsed.phone || "", website: parsed.website || "", address: parsed.address || "" }
+    : { name: "", phone: "", website: "", address: "" };
+
+  document.getElementById("bizName").value = clientDetails.name;
+  document.getElementById("bizPhone").value = clientDetails.phone;
+  document.getElementById("bizWebsite").value = clientDetails.website;
+  document.getElementById("bizAddress").value = clientDetails.address;
 }
 
 function saveDetails() {
@@ -76,8 +84,14 @@ function saveDetails() {
 function loadOffersAndEdits() {
   const o = localStorage.getItem("dm_offers_" + currentUser);
   const e = localStorage.getItem("dm_edits_" + currentUser);
-  messageOffers = o ? JSON.parse(o) : {};
-  messageEdits  = e ? JSON.parse(e) : {};
+
+  try { messageOffers = o ? JSON.parse(o) : {}; }
+  catch (err) { console.warn("Corrupted offers, resetting.", err); messageOffers = {}; }
+  if (!messageOffers || typeof messageOffers !== "object") messageOffers = {};
+
+  try { messageEdits = e ? JSON.parse(e) : {}; }
+  catch (err) { console.warn("Corrupted edits, resetting.", err); messageEdits = {}; }
+  if (!messageEdits || typeof messageEdits !== "object") messageEdits = {};
 }
 function saveOffers() { localStorage.setItem("dm_offers_" + currentUser, JSON.stringify(messageOffers)); }
 function saveEdits()  { localStorage.setItem("dm_edits_"  + currentUser, JSON.stringify(messageEdits)); }
@@ -93,11 +107,22 @@ function buildSignature() {
   return s.trim();
 }
 
-/* -------- BUILD FINAL MESSAGE -------- */
-function buildFullMessage(msg) {
+/* -------- GET BASE MESSAGE (edited or original) -------- */
+function getBaseMessage(msg) {
   if (messageEdits[msg.id]) return messageEdits[msg.id];
+  return msg.message[currentLang] || msg.message.en;
+}
 
-  let text = msg.message[currentLang] || msg.message.en;
+/* -------- BUILD FINAL MESSAGE --------
+   Order:
+     1. Base message (edited version if any, otherwise original)
+     2. Offer (if enabled + non-empty)
+     3. Signature (if enabled)
+   Because edits only replace the BASE, offer and signature keep working
+   even after a message is edited.
+------------------------------------ */
+function buildFullMessage(msg) {
+  let text = getBaseMessage(msg);
 
   const offer = messageOffers[msg.id];
   if (msg.includeOffer && offer && offer.trim()) {
@@ -197,6 +222,7 @@ function buildCard(msg, isToday) {
   const fullText = buildFullMessage(msg);
   const titleText = msg.title[currentLang] || msg.title.en;
   const offerText = messageOffers[msg.id] || "";
+  const isEdited  = !!messageEdits[msg.id];
 
   let html = "";
 
@@ -213,7 +239,7 @@ function buildCard(msg, isToday) {
     html += `<div class="date-badge">💼 Business Template</div>`;
   }
 
-  html += `<div class="title">${titleText}</div>`;
+  html += `<div class="title">${escapeHtml(titleText)}${isEdited ? ' <span style="font-size:.7rem;color:#c62828;font-weight:600;">(edited)</span>' : ""}</div>`;
 
   if (msg.includeOffer) {
     html += `
@@ -294,26 +320,44 @@ function copyMessage(id) {
     });
 }
 
-/* -------- EDIT -------- */
+/* -------- EDIT (BASE ONLY) --------
+   Editing changes only the base message. Offer and signature continue
+   to be appended automatically when copying.
+------------------------------------ */
 function editMessage(id) {
   const msg = ALL_MESSAGES.find(m => m.id === id);
   if (!msg) return;
+
   const bodyEl = document.getElementById("msgBody-" + id);
-  const current = buildFullMessage(msg);
+  if (!bodyEl) return;
+
+  const baseText = getBaseMessage(msg);
+
+  const wrap = document.createElement("div");
+  wrap.className = "edit-wrap";
+  wrap.innerHTML = `<div class="edit-hint">✏️ Editing the base message. Offer &amp; signature will be added automatically when you copy.</div>`;
 
   const ta = document.createElement("textarea");
   ta.className = "edit-area";
-  ta.value = current;
-  bodyEl.replaceWith(ta);
+  ta.value = baseText;
+  wrap.appendChild(ta);
+
+  bodyEl.replaceWith(wrap);
   ta.focus();
 
-  const actions = ta.closest(".card").querySelector(".actions");
+  const actions = wrap.closest(".card").querySelector(".actions");
   const saveBtn = document.createElement("button");
   saveBtn.textContent = "💾 Save Edit";
   saveBtn.style.background = "#25d366";
   saveBtn.style.color = "#fff";
   saveBtn.onclick = () => {
-    messageEdits[id] = ta.value;
+    const trimmed = ta.value.trim();
+    // If user cleared the edit or it matches the original, drop the edit entry
+    if (!trimmed || trimmed === (msg.message[currentLang] || msg.message.en)) {
+      delete messageEdits[id];
+    } else {
+      messageEdits[id] = ta.value;
+    }
     saveEdits();
     showToast("✅ Edit saved");
     renderMessages();
