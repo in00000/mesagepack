@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#c62828">
-<title>Daily Messages – Festivals & Business</title>
+<title>Daily Messages</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,15 +13,14 @@
 <div id="loginScreen" class="login-wrap">
   <div class="login-box">
     <div class="login-header">
-      <img src="assets/logo.png" alt="PCMC Diary Logo" class="login-logo">
+      <img src="assets/logo.png" alt="Logo" class="login-logo">
       <h2>Daily Messages</h2>
       <p class="subtitle">Login to your account</p>
     </div>
-
     <div class="login-form">
       <div class="input-group">
         <span class="input-icon">👤</span>
-        <input id="usernameInput" type="text" placeholder="Username (e.g., PD45981)" autocomplete="username">
+        <input id="usernameInput" type="text" placeholder="Username" autocomplete="username">
       </div>
       <div class="input-group">
         <span class="input-icon">🔒</span>
@@ -30,7 +29,6 @@
       <div id="loginError" class="error-msg"></div>
       <button onclick="handleLogin()" class="btn-primary">Login →</button>
     </div>
-
     <div class="login-footer">
       <span>Powered by</span>
       <a href="http://pcmcdiary.com" target="_blank" rel="noopener">pcmcdiary.com</a>
@@ -41,23 +39,17 @@
 <!-- ================= MAIN APP ================= -->
 <div id="appScreen" class="app hidden">
 
-  <!-- HEADER -->
   <header class="app-header">
     <div class="brand">
       <img src="assets/logo.png" alt="Logo" class="brand-logo">
       <span class="brand-name">Daily Messages</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="toggleDetailsForm()" aria-label="My Details">
-        <span class="icon">🏢</span>
-      </button>
-      <button class="icon-btn" onclick="logout()" aria-label="Logout">
-        <span class="icon">⎋</span>
-      </button>
+      <button class="icon-btn" onclick="toggleDetailsForm()" aria-label="Details">🏢</button>
+      <button class="icon-btn" onclick="logout()" aria-label="Logout">⎋</button>
     </div>
   </header>
 
-  <!-- STICKY CONTROLS -->
   <div class="controls-sticky">
     <div class="segmented">
       <button data-lang="en" class="active" onclick="setLang('en')">English</button>
@@ -66,29 +58,29 @@
     </div>
     <div class="chips-wrap">
       <button data-cat="all" class="active" onclick="setCategory('all')">All</button>
-      <button data-cat="festival" onclick="setCategory('festival')">🎉 Festivals</button>
-      <button data-cat="special_day" onclick="setCategory('special_day')">🌟 Special Days</button>
-      <button data-cat="saint_god" onclick="setCategory('saint_god')">🙏 Saints &amp; Gods</button>
       <button data-cat="business" onclick="setCategory('business')">💼 Business</button>
+      <button data-cat="maharashtra" onclick="setCategory('maharashtra')">🚩 Maharashtra</button>
+      <button data-cat="festival" onclick="setCategory('festival')">🎉 Festivals</button>
+      <button data-cat="saint" onclick="setCategory('saint')">🙏 Saints</button>
+      <button data-cat="maharaj" onclick="setCategory('maharaj')">👑 Maharaj</button>
+      <button data-cat="world" onclick="setCategory('world')">🌏 World Days</button>
     </div>
   </div>
 
-  <!-- CONTENT -->
   <div class="container">
-
     <div id="detailsForm" class="details-form hidden">
       <div class="details-header">
         <h3>🏢 Business Details</h3>
-        <button class="close-btn" onclick="toggleDetailsForm()" aria-label="Close">✕</button>
+        <button class="close-btn" onclick="toggleDetailsForm()">✕</button>
       </div>
-      <p class="hint">These will be added to every message you copy.</p>
-      <input id="bizName" placeholder="Business Name" autocomplete="organization">
-      <input id="bizPhone" placeholder="Phone Number" inputmode="tel" autocomplete="tel">
-      <input id="bizWebsite" placeholder="Website" inputmode="url">
-      <input id="bizAddress" placeholder="Address" autocomplete="street-address">
+      <p class="hint">Added to every message you copy.</p>
+      <input id="bizName" placeholder="Business Name">
+      <input id="bizPhone" placeholder="Phone Number">
+      <input id="bizWebsite" placeholder="Website">
+      <input id="bizAddress" placeholder="Address">
+      <input id="bizMapLink" placeholder="Google Review / Map Link" inputmode="url">
       <button onclick="saveDetails()" class="btn-primary">💾 Save Details</button>
     </div>
-
     <div id="messageList"></div>
   </div>
 </div>
