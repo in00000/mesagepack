@@ -1,11 +1,22 @@
 /* ============================================================
-   MAIN APP LOGIC
+   MAIN APP LOGIC — COMPLETE REVISED
+   Features:
+   - Session persistence
+   - Language switching (en / hi / mr)
+   - Category filtering
+   - Calendar sort: Today → Upcoming → Past → Undated
+   - TODAY'S MESSAGES BOX (highlighted, all today's items together)
+   - Per-message offer input
+   - Per-message edit (base message only — offer/signature still appended)
+   - Per-message copy with placeholder replacement
+   - Placeholders: {TODAY_DATE} {BUSINESS_NAME} {BUSINESS_PHONE}
+                   {BUSINESS_WEBSITE} {BUSINESS_ADDRESS} {MAP_LINK}
    ============================================================ */
 
 let currentUser = null;
 let currentLang = "en";
 let currentCategory = "all";
-let clientDetails = { name: "", phone: "", website: "", address: "" };
+let clientDetails = { name: "", phone: "", website: "", address: "", mapLink: "" };
 let messageOffers = {};
 let messageEdits  = {};
 
@@ -59,21 +70,31 @@ function loadClientDetails() {
     catch (e) { console.warn("Corrupted client details, resetting.", e); }
   }
   clientDetails = parsed && typeof parsed === "object"
-    ? { name: parsed.name || "", phone: parsed.phone || "", website: parsed.website || "", address: parsed.address || "" }
-    : { name: "", phone: "", website: "", address: "" };
+    ? {
+        name: parsed.name || "",
+        phone: parsed.phone || "",
+        website: parsed.website || "",
+        address: parsed.address || "",
+        mapLink: parsed.mapLink || ""
+      }
+    : { name: "", phone: "", website: "", address: "", mapLink: "" };
 
-  document.getElementById("bizName").value = clientDetails.name;
-  document.getElementById("bizPhone").value = clientDetails.phone;
-  document.getElementById("bizWebsite").value = clientDetails.website;
-  document.getElementById("bizAddress").value = clientDetails.address;
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  setVal("bizName", clientDetails.name);
+  setVal("bizPhone", clientDetails.phone);
+  setVal("bizWebsite", clientDetails.website);
+  setVal("bizAddress", clientDetails.address);
+  setVal("bizMapLink", clientDetails.mapLink);
 }
 
 function saveDetails() {
+  const getVal = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
   clientDetails = {
-    name: document.getElementById("bizName").value.trim(),
-    phone: document.getElementById("bizPhone").value.trim(),
-    website: document.getElementById("bizWebsite").value.trim(),
-    address: document.getElementById("bizAddress").value.trim()
+    name: getVal("bizName"),
+    phone: getVal("bizPhone"),
+    website: getVal("bizWebsite"),
+    address: getVal("bizAddress"),
+    mapLink: getVal("bizMapLink")
   };
   localStorage.setItem("dm_details_" + currentUser, JSON.stringify(clientDetails));
   showToast("✅ Details saved");
@@ -107,6 +128,26 @@ function buildSignature() {
   return s.trim();
 }
 
+/* -------- PLACEHOLDER REPLACEMENT -------- */
+function getTodayFormatted() {
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2, "0");
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function replacePlaceholders(text) {
+  if (!text) return "";
+  const mapFallback = "📍 (Add your Google review link in Business Details)";
+  return text
+    .replace(/\{TODAY_DATE\}/g, getTodayFormatted())
+    .replace(/\{BUSINESS_NAME\}/g, clientDetails.name || "")
+    .replace(/\{BUSINESS_PHONE\}/g, clientDetails.phone || "")
+    .replace(/\{BUSINESS_WEBSITE\}/g, clientDetails.website || "")
+    .replace(/\{BUSINESS_ADDRESS\}/g, clientDetails.address || "")
+    .replace(/\{MAP_LINK\}/g, clientDetails.mapLink || mapFallback);
+}
+
 /* -------- GET BASE MESSAGE (edited or original) -------- */
 function getBaseMessage(msg) {
   if (messageEdits[msg.id]) return messageEdits[msg.id];
@@ -115,14 +156,12 @@ function getBaseMessage(msg) {
 
 /* -------- BUILD FINAL MESSAGE --------
    Order:
-     1. Base message (edited version if any, otherwise original)
+     1. Base message (edited or original) with placeholders replaced
      2. Offer (if enabled + non-empty)
      3. Signature (if enabled)
-   Because edits only replace the BASE, offer and signature keep working
-   even after a message is edited.
 ------------------------------------ */
 function buildFullMessage(msg) {
-  let text = getBaseMessage(msg);
+  let text = replacePlaceholders(getBaseMessage(msg));
 
   const offer = messageOffers[msg.id];
   if (msg.includeOffer && offer && offer.trim()) {
@@ -174,7 +213,7 @@ function sortByCalendar(messages) {
   });
 }
 
-/* -------- RENDER -------- */
+/* -------- RENDER (WITH TODAY BOX) -------- */
 function renderMessages() {
   const list = document.getElementById("messageList");
   const today = getTodayStr();
@@ -195,22 +234,33 @@ function renderMessages() {
   const todayItems = items.filter(m => m.date === today);
   const restItems  = items.filter(m => m.date !== today);
 
+  /* -------- TODAY'S MESSAGES BOX -------- */
   if (todayItems.length > 0) {
-    const sec = document.createElement("div");
-    sec.className = "section-divider today-divider";
-    sec.innerHTML = "🎯 TODAY";
-    list.appendChild(sec);
-    todayItems.forEach(m => list.appendChild(buildCard(m, true)));
+    const box = document.createElement("div");
+    box.className = "today-box";
 
-    if (restItems.length > 0) {
-      const sec2 = document.createElement("div");
-      sec2.className = "section-divider";
-      sec2.innerHTML = "📅 UPCOMING &amp; OTHERS";
-      list.appendChild(sec2);
-    }
+    const header = document.createElement("div");
+    header.className = "today-box-header";
+    header.innerHTML = '<span class="today-icon">🎯</span><span>Today\'s Messages</span>';
+    box.appendChild(header);
+
+    const sub = document.createElement("div");
+    sub.className = "today-box-sub";
+    sub.textContent = `${todayItems.length} message${todayItems.length > 1 ? "s" : ""} • ${getTodayFormatted()}`;
+    box.appendChild(sub);
+
+    todayItems.forEach(m => box.appendChild(buildCard(m, true)));
+    list.appendChild(box);
   }
 
-  restItems.forEach(m => list.appendChild(buildCard(m, false)));
+  /* -------- UPCOMING & OTHERS -------- */
+  if (restItems.length > 0) {
+    const sec = document.createElement("div");
+    sec.className = "section-divider";
+    sec.innerHTML = "📅 UPCOMING &amp; OTHERS";
+    list.appendChild(sec);
+    restItems.forEach(m => list.appendChild(buildCard(m, false)));
+  }
 }
 
 /* -------- BUILD A CARD -------- */
@@ -276,19 +326,22 @@ function buildCard(msg, isToday) {
 
   if (msg.includeOffer) {
     const input = card.querySelector("#offerInput-" + msg.id);
-    input.addEventListener("input", () => {
-      messageOffers[msg.id] = input.value;
-      saveOffers();
-      card.querySelector("#msgBody-" + msg.id).textContent = buildFullMessage(msg);
-      const box = card.querySelector("#offerBox-" + msg.id);
-      const boxText = card.querySelector("#offerTextBox-" + msg.id);
-      if (input.value.trim()) {
-        box.classList.add("visible");
-        boxText.textContent = input.value;
-      } else {
-        box.classList.remove("visible");
-      }
-    });
+    if (input) {
+      input.addEventListener("input", () => {
+        messageOffers[msg.id] = input.value;
+        saveOffers();
+        const bodyEl = card.querySelector("#msgBody-" + msg.id);
+        if (bodyEl) bodyEl.textContent = buildFullMessage(msg);
+        const box = card.querySelector("#offerBox-" + msg.id);
+        const boxText = card.querySelector("#offerTextBox-" + msg.id);
+        if (input.value.trim()) {
+          if (box) box.classList.add("visible");
+          if (boxText) boxText.textContent = input.value;
+        } else {
+          if (box) box.classList.remove("visible");
+        }
+      });
+    }
   }
 
   return card;
@@ -296,7 +349,8 @@ function buildCard(msg, isToday) {
 
 /* -------- OFFER TOGGLE -------- */
 function toggleOffer(id) {
-  document.getElementById("offerWrap-" + id).classList.toggle("visible");
+  const wrap = document.getElementById("offerWrap-" + id);
+  if (wrap) wrap.classList.toggle("visible");
   const inp = document.getElementById("offerInput-" + id);
   if (inp) inp.focus();
 }
@@ -320,10 +374,7 @@ function copyMessage(id) {
     });
 }
 
-/* -------- EDIT (BASE ONLY) --------
-   Editing changes only the base message. Offer and signature continue
-   to be appended automatically when copying.
------------------------------------- */
+/* -------- EDIT (BASE MESSAGE ONLY) -------- */
 function editMessage(id) {
   const msg = ALL_MESSAGES.find(m => m.id === id);
   if (!msg) return;
@@ -346,13 +397,14 @@ function editMessage(id) {
   ta.focus();
 
   const actions = wrap.closest(".card").querySelector(".actions");
+  if (!actions) return;
+
   const saveBtn = document.createElement("button");
   saveBtn.textContent = "💾 Save Edit";
   saveBtn.style.background = "#25d366";
   saveBtn.style.color = "#fff";
   saveBtn.onclick = () => {
     const trimmed = ta.value.trim();
-    // If user cleared the edit or it matches the original, drop the edit entry
     if (!trimmed || trimmed === (msg.message[currentLang] || msg.message.en)) {
       delete messageEdits[id];
     } else {
